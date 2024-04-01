@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  mysqldb:
+    image: "mysql:8.0"
+    restart: always
+    container_name: productdb
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_DATABASE: marketplaceProduct
+      MYSQL_USER: adminproduct
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: Amila_Rpw
+    volumes:
+      - mysql-data-product:/var/lib/mysqlproduct
+volumes:
+  mysql-data-product:
