@@ -1,6 +1,8 @@
 package com.laba.ProductService.dto;
 
-public class ProductResponseByCategoryDto {
+import java.io.Serializable;
+
+public class ProductResponseByCategoryDto implements Serializable {
 
     private String name;
 

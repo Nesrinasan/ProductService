@@ -10,6 +10,9 @@ import com.laba.ProductService.exception.GeneralException;
 import com.laba.ProductService.model.Product;
 import com.laba.ProductService.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,25 +71,38 @@ public class ProductService {
         return Optional.ofNullable(modelMapper.map(product, ProductInfoResponseDto.class));
 
     }
-
+    @Cacheable(value = "productsByCategory3", key = "#category", cacheManager = "cManager")
     public Optional<List<ProductResponseByCategoryDto>> productListByCategory(String category) {
         List<Product> allByCategory = productRepository.findAllByCategory(category);
 
         List<ProductResponseByCategoryDto> list = allByCategory.stream().map(product -> {
 
-            ProductResponseByCategoryDto productResponseByCategoryDto = modelMapper.map(product, ProductResponseByCategoryDto.class);
+           return modelMapper.map(product, ProductResponseByCategoryDto.class);
 
-            return productResponseByCategoryDto;
         }).toList();
-
-        /**
-         * Mapstruct
-         */
-      //  List<ProductResponseByCategoryDto> listMapstruct = allByCategory.stream().map(productMapper::productToProductResponseDtoByCategory).toList();
 
         return Optional.ofNullable(list);
 
     }
 
+
+    @CachePut(value = "productsByCategory3", key = "#category", cacheManager = "cManager")
+    public Optional<List<ProductResponseByCategoryDto>> productListByCategoryUpdate(String category) {
+        List<Product> allByCategory = productRepository.findAllByCategory(category);
+
+        List<ProductResponseByCategoryDto> list = allByCategory.stream().map(product -> {
+
+            return modelMapper.map(product, ProductResponseByCategoryDto.class);
+
+        }).toList();
+
+        return Optional.ofNullable(list);
+
+    }
+
+    @CacheEvict(value = "productsByCategory2", key = "#category")
+    public void delete(){
+        System.out.println();
+    }
 
 }

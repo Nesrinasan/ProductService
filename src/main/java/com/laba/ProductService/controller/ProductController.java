@@ -31,6 +31,7 @@ public class ProductController {
 
     @PutMapping("/updateProductCount")
     public void updateProductCount(@RequestBody ProductCountUpdateRequestDto productCountUpdateRequestDto) {
+
         productService.updateProductCount(productCountUpdateRequestDto);
     }
 
