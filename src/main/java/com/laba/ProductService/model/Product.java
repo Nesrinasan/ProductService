@@ -1,10 +1,7 @@
 
 package com.laba.ProductService.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,6 +22,9 @@ public class Product extends BaseEntity implements Serializable {
     private String description;
 
     private Double price;
+
+    @Version
+    private Long version;
 
     private int numberOfProduct;
 
