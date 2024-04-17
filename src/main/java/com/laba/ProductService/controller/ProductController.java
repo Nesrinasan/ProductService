@@ -1,10 +1,7 @@
 package com.laba.ProductService.controller;
 
 
-import com.laba.ProductService.dto.ProductCountUpdateRequestDto;
-import com.laba.ProductService.dto.ProductInfoResponseDto;
-import com.laba.ProductService.dto.ProductResponseByCategoryDto;
-import com.laba.ProductService.dto.ProductSaveReqestDto;
+import com.laba.ProductService.dto.*;
 import com.laba.ProductService.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +26,10 @@ public class ProductController {
         productService.save(productSaveReqestDto);
     }
 
+    @PutMapping("/updateProduct")
+    public void saveAllExcel(@RequestBody ProductUpdateRequestDto productUpdateRequestDto) {
+        productService.updateProducts(productUpdateRequestDto);
+    }
     @PutMapping("/updateProductCount")
     public void updateProductCount(@RequestBody ProductCountUpdateRequestDto productCountUpdateRequestDto) {
 

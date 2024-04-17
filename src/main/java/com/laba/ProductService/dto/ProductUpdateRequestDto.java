@@ -1,20 +1,11 @@
+package com.laba.ProductService.dto;
 
-package com.laba.ProductService.model;
 
-import jakarta.persistence.*;
+public class ProductUpdateRequestDto {
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-@Entity
-@Table(name = "product")
-public class Product extends BaseEntity implements Serializable {
-
-    @Column
+    private long id;
     private String name;
 
-    @Column
     private String category;
 
     private String photoUrl;
@@ -24,15 +15,6 @@ public class Product extends BaseEntity implements Serializable {
     private Double price;
 
     private int numberOfProduct;
-
-    private int weight;
-
-
-//	@ManyToMany(mappedBy = "products")
-//	private Set<Order> orders;
-
-    private static final long serialVersionUID = 1L;
-
 
     public String getName() {
         return name;
@@ -79,24 +61,14 @@ public class Product extends BaseEntity implements Serializable {
     }
 
     public void setNumberOfProduct(int numberOfProduct) {
-
         this.numberOfProduct = numberOfProduct;
-
     }
 
-    public int getWeight() {
-        return weight;
+    public long getId() {
+        return id;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setId(long id) {
+        this.id = id;
     }
-
-    //	public Set<Order> getOrders() {
-//		return orders;
-//	}
-//
-//	public void setOrders(Set<Order> orders) {
-//		this.orders = orders;
-//	}
 }

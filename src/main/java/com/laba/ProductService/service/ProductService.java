@@ -2,13 +2,11 @@
 package com.laba.ProductService.service;
 
 
-import com.laba.ProductService.dto.ProductCountUpdateRequestDto;
-import com.laba.ProductService.dto.ProductInfoResponseDto;
-import com.laba.ProductService.dto.ProductResponseByCategoryDto;
-import com.laba.ProductService.dto.ProductSaveReqestDto;
+import com.laba.ProductService.dto.*;
 import com.laba.ProductService.exception.GeneralException;
 import com.laba.ProductService.model.Product;
 import com.laba.ProductService.repository.ProductRepository;
+import com.laba.ProductService.service.kafka.producer.ProductProducer;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -24,22 +22,32 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
+    private final ProductProducer productProducer;
 
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper) {
+
+    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, ProductProducer productProducer) {
         this.productRepository = productRepository;
 
         this.modelMapper = modelMapper;
+        this.productProducer = productProducer;
     }
 
-    public void save(ProductSaveReqestDto productSaveReqestDto){
-        Product product =  modelMapper.map(productSaveReqestDto, Product.class);
+    public void save(ProductSaveReqestDto productSaveReqestDto) {
+        Product product = modelMapper.map(productSaveReqestDto, Product.class);
         product.setCategory(productSaveReqestDto.getCategory());
         product.setName(productSaveReqestDto.getName());
         saveProduct(product);
 
     }
 
-    public void updateProductCount(ProductCountUpdateRequestDto productCountUpdateRequestDto){
+    public void updateProducts(ProductUpdateRequestDto productUpdateRequestDto) {
+
+        productProducer.sendMessageKafkaUpdateProducts(productUpdateRequestDto);
+
+
+    }
+
+    public void updateProductCount(ProductCountUpdateRequestDto productCountUpdateRequestDto) {
 
         Optional<Product> productOptional = productRepository.findById(productCountUpdateRequestDto.id());
         Product product = productOptional.orElseThrow(GeneralException::new);
@@ -48,13 +56,13 @@ public class ProductService {
 
     }
 
-    public void saveProduct(Product product) {
-        productRepository.save(product);
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
 
 
     }
 
-    public Product findProductById(Long id){
+    public Product findProductById(Long id) {
         return productRepository.findById(id).get();
     }
 
@@ -71,13 +79,14 @@ public class ProductService {
         return Optional.ofNullable(modelMapper.map(product, ProductInfoResponseDto.class));
 
     }
+
     @Cacheable(value = "productsByCategory3", key = "#category", cacheManager = "cManager")
     public Optional<List<ProductResponseByCategoryDto>> productListByCategory(String category) {
         List<Product> allByCategory = productRepository.findAllByCategory(category);
 
         List<ProductResponseByCategoryDto> list = allByCategory.stream().map(product -> {
 
-           return modelMapper.map(product, ProductResponseByCategoryDto.class);
+            return modelMapper.map(product, ProductResponseByCategoryDto.class);
 
         }).toList();
 
@@ -101,7 +110,7 @@ public class ProductService {
     }
 
     @CacheEvict(value = "productsByCategory2", key = "#category")
-    public void delete(){
+    public void delete() {
         System.out.println();
     }
 
